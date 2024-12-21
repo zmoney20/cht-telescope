@@ -19,7 +19,7 @@ end
 --- @param prompt string: User input for filtering results
 --- @return string: Generated command
 M.generate_command = function(base_url, prompt)
-	local cmd = "curl -s " .. base_url .. "/:list | rg -v '^:' | rg -v '^\\['"
+	local cmd = "curl -s " .. base_url .. "/:list"
 	if prompt and prompt ~= "" then
 		cmd = cmd .. " | rg -i " .. vim.fn.shellescape(prompt) .. " | sort"
 	end
