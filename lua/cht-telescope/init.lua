@@ -85,7 +85,7 @@ end
 
 --- Search cheat sheet topics
 --- @param opts Options: Options for the search
-function M.search_cht_sh(opts)
+M.search_cht_sh = function(opts)
 	opts = utils.merge_opts(default_options, opts)
 
 	create_picker("Cheat Sheet Topics", "cht.sh", opts, function(selection)

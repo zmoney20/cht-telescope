@@ -4,7 +4,7 @@ local M = {}
 --- @param default_options Options: Default options
 --- @param opts Options: Options to merge with default_options
 --- @return Options: Merged options
-function M.merge_opts(default_options, opts)
+M.merge_opts = function(default_options, opts)
 	opts = opts or {}
 	for k, v in pairs(default_options) do
 		if opts[k] == nil then
@@ -18,7 +18,7 @@ end
 --- @param base_url string: Base URL for the cheat sheet
 --- @param prompt string: User input for filtering results
 --- @return string: Generated command
-function M.generate_command(base_url, prompt)
+M.generate_command = function(base_url, prompt)
 	local cmd = "curl -s " .. base_url .. "/:list | rg -v '^:' | rg -v '^\\['"
 	if prompt and prompt ~= "" then
 		cmd = cmd .. " | rg -i " .. vim.fn.shellescape(prompt) .. " | sort"
