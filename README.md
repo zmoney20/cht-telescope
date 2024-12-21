@@ -39,12 +39,12 @@ vim.keymap.set("n", "<leader>sc", require("cht-telescope").search_cht_sh, { desc
 ```
 
 ## Customizations
-when calling the setup or the search_cht_sh function, you can pass in a table with the following options:
+when calling the `setup` or the `search_cht_sh` function, you can pass in a table with the following options:
 ```lua
 {
   debounce = 100, -- default is 100ms
   
-  -- include these, will just pass the string into a rg -i
+  -- "include" these, will just pass the string into a rg -i
   include = {
     "bash",
     "docker",
@@ -55,7 +55,7 @@ when calling the setup or the search_cht_sh function, you can pass in a table wi
     "rust",
     "typescript",
   },
-  -- exclude these, will pass the string into a rg -v
+  -- "exclude" these, will pass the string into a rg -v
   -- exclude = {
   --   "^:",
   --   "^\\[",
