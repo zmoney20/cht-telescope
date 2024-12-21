@@ -5,6 +5,7 @@ local make_entry = require("telescope.make_entry")
 local actions = require("telescope.actions")
 local action_state = require("telescope.actions.state")
 local previewers = require("telescope.previewers")
+local sorters = require("telescope.sorters")
 
 -- Utils
 local utils = require("cht-telescope.utils")
@@ -22,6 +23,7 @@ local merged_opts = {}
 --- Setup function to set default options
 --- @param opts Options: Options to merge with default_opts
 M.setup = function(opts)
+	opts = opts or {}
 	merged_opts = utils.merge_opts(default_opts, opts)
 end
 
@@ -47,12 +49,29 @@ local create_picker = function(title, base_url, on_select)
 		debounce = merged_opts.debounce,
 		prompt_title = title,
 		finder = create_finder(base_url),
-		previewer = previewers.new_termopen_previewer({
-			get_command = function(entry)
-				return { "sh", "-c", "curl -s " .. base_url .. "/" .. entry.value .. " | " .. utils.sed_command }
+		previewer = previewers.new_buffer_previewer({
+			define_preview = function(self, entry)
+				local cmd = "curl -s " .. base_url .. "/" .. entry.value .. " | " .. utils.sed_command
+				local output = vim.fn.system(cmd)
+				vim.api.nvim_buf_set_lines(self.state.bufnr, 0, -1, false, vim.split(output, "\n"))
+				-- Set the filetype for syntax highlighting
+				local filetype = "sh" -- Default filetype
+				if base_url:match("cht.sh/") then
+					local topic = base_url:match("cht.sh/(.+)")
+					if topic then
+						filetype = topic
+					end
+				end
+				vim.api.nvim_buf_set_option(self.state.bufnr, "filetype", filetype)
+				-- Make the buffer read-only
+				vim.api.nvim_buf_set_option(self.state.bufnr, "modifiable", false)
+				vim.api.nvim_buf_set_option(self.state.bufnr, "readonly", true)
+				-- Set buffer options to avoid save prompts
+				vim.api.nvim_buf_set_option(self.state.bufnr, "buftype", "nofile")
+				vim.api.nvim_buf_set_option(self.state.bufnr, "bufhidden", "wipe")
 			end,
 		}),
-		sorter = require("telescope.sorters").get_fuzzy_file(),
+		sorter = sorters.get_fuzzy_file(),
 	})
 
 	local original_select_default = actions.select_default
@@ -77,7 +96,17 @@ local search_cht_sh_query = function(topic, opts)
 
 	create_picker("Cheat Sheets for " .. topic, "cht.sh/" .. topic, function(selection)
 		vim.cmd("new")
-		vim.fn.termopen("curl -s cht.sh/" .. topic .. "/" .. selection.value .. " | " .. utils.sed_command)
+		local cmd = "curl -s cht.sh/" .. topic .. "/" .. selection.value .. " | " .. utils.sed_command
+		local output = vim.fn.system(cmd)
+		vim.api.nvim_buf_set_lines(0, 0, -1, false, vim.split(output, "\n"))
+		-- Set the filetype for syntax highlighting
+		vim.api.nvim_buf_set_option(0, "filetype", topic)
+		-- Make the buffer read-only
+		vim.api.nvim_buf_set_option(0, "modifiable", false)
+		vim.api.nvim_buf_set_option(0, "readonly", true)
+		-- Set buffer options to avoid save prompts
+		vim.api.nvim_buf_set_option(0, "buftype", "nofile")
+		vim.api.nvim_buf_set_option(0, "bufhidden", "wipe")
 	end)
 end
 
