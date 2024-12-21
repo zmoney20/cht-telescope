@@ -1,0 +1,11 @@
+repos:
+  - repo: https://github.com/JohnnyMorganz/StyLua
+    rev: v0.20.0
+    hooks:
+      - id: stylua # or stylua-system / stylua-github
+        name: StyLua (cargo)
+        description: An opinionated Lua code formatter
+        entry: stylua
+        language: rust
+        types:
+          - lua

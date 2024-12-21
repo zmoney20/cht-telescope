@@ -1,0 +1,2 @@
+--- @class Options
+--- @field debounce number: Debounce time in milliseconds
