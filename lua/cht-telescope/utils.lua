@@ -1,12 +1,12 @@
 local M = {}
 
 --- Merge user options with default options
---- @param default_options Options: Default options
---- @param opts Options: Options to merge with default_options
+--- @param default_opts Options: Default options
+--- @param opts Options: Options to merge with default_opts
 --- @return Options: Merged options
-M.merge_opts = function(default_options, opts)
+M.merge_opts = function(default_opts, opts)
 	opts = opts or {}
-	for k, v in pairs(default_options) do
+	for k, v in pairs(default_opts) do
 		if opts[k] == nil then
 			opts[k] = v
 		end
