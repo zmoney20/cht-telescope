@@ -21,7 +21,7 @@ local default_opts = {
 local merged_opts = {}
 
 --- Setup function to set default options
---- @param opts Options: Options to merge with default_opts
+--- @param opts? Options: Options to merge with default_opts
 M.setup = function(opts)
 	opts = opts or {}
 	merged_opts = utils.merge_opts(default_opts, opts)
