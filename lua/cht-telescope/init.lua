@@ -15,6 +15,8 @@ local M = {}
 --- @type Options
 local default_opts = {
 	debounce = 100,
+	include = {},
+	exclude = {},
 }
 
 --- @type Options
@@ -34,7 +36,7 @@ local create_finder = function(base_url)
 		--- @param prompt string
 		--- @return Command
 		command_generator = function(prompt)
-			return { "sh", "-c", utils.generate_command(base_url, prompt) }
+			return { "sh", "-c", utils.generate_command(base_url, prompt, merged_opts) }
 		end,
 		entry_maker = make_entry.gen_from_string(merged_opts),
 	})
