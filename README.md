@@ -1,9 +1,10 @@
-# ch.sh-telescope
+# cht-telescope
 use cht.sh with nvim-telescope
 
 ### Disclaimer
 This is a personal project, very much a WIP.
 
+![](./preview.gif)
 ## Installation
 via [lazy.nvim](https://github.com/folke/lazy.nvim)
 ```lua
@@ -17,6 +18,19 @@ via [lazy.nvim](https://github.com/folke/lazy.nvim)
     })
   end
 }
+```
+Or, just add it as a dependency for telescope if you've already got that installed. Example:
+```lua
+{
+  {
+    "nvim-telescope/telescope.nvim",
+      branch = "0.1.x",
+      dependencies = {
+        "nvim-lua/plenary.nvim",
+	"zmoney20/cht-telescope",
+      },
+    lazy = true,
+...
 ```
 
 ## Usage
