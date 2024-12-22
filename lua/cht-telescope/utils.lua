@@ -48,6 +48,30 @@ M.generate_command = function(base_url, prompt, opts)
 	return cmd
 end
 
+M.create_buffer = function(topic, output, is_language)
+	-- Create a new split window
+	vim.cmd("new")
+
+	-- Split the output into lines
+	local lines = vim.split(output, "\n")
+
+	-- Set the buffer lines
+	vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
+
+	-- Set the filetype for syntax highlighting
+	if not is_language then
+		topic = "sh" -- Default filetype
+	end
+	vim.api.nvim_buf_set_option(0, "filetype", topic)
+
+	-- Make the buffer read-only
+	vim.api.nvim_buf_set_option(0, "modifiable", false)
+	vim.api.nvim_buf_set_option(0, "readonly", true)
+	-- Set buffer options to avoid save prompts
+	vim.api.nvim_buf_set_option(0, "buftype", "nofile")
+	vim.api.nvim_buf_set_option(0, "bufhidden", "wipe")
+end
+
 -- Define the sed command to remove ANSI color codes
 M.sed_command = "sed 's/\\x1b\\[[0-9;]*m//g'"
 

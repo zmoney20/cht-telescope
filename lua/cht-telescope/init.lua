@@ -65,12 +65,6 @@ local create_picker = function(title, base_url, on_select)
 					end
 				end
 				vim.api.nvim_buf_set_option(self.state.bufnr, "filetype", filetype)
-				-- Make the buffer read-only
-				vim.api.nvim_buf_set_option(self.state.bufnr, "modifiable", false)
-				vim.api.nvim_buf_set_option(self.state.bufnr, "readonly", true)
-				-- Set buffer options to avoid save prompts
-				vim.api.nvim_buf_set_option(self.state.bufnr, "buftype", "nofile")
-				vim.api.nvim_buf_set_option(self.state.bufnr, "bufhidden", "wipe")
 			end,
 		}),
 		sorter = sorters.get_fuzzy_file(),
@@ -96,19 +90,23 @@ end
 local search_cht_sh_query = function(topic, opts)
 	opts = utils.merge_opts(merged_opts, opts)
 
+	-- Check if the topic has a list of cheat sheets
+	local topic_list = "curl -s cht.sh/" .. topic .. "/:list | " .. utils.sed_command
+	local list_output = vim.fn.system(topic_list)
+
+	-- If the topic has no list of cheat sheets, open the cheat sheet
+	if not list_output or list_output == "" or list_output == "\n" then
+		local buffer_topic = "curl -s cht.sh/" .. topic .. " | " .. utils.sed_command
+		local buffer_output = vim.fn.system(buffer_topic)
+		utils.create_buffer(buffer_topic, buffer_output, false)
+		return
+	end
+
+	-- If the topic has a list of cheat sheets, create a picker for the list of cheat sheets
 	create_picker("Cheat Sheets for " .. topic, "cht.sh/" .. topic, function(selection)
-		vim.cmd("new")
 		local cmd = "curl -s cht.sh/" .. topic .. "/" .. selection.value .. " | " .. utils.sed_command
 		local output = vim.fn.system(cmd)
-		vim.api.nvim_buf_set_lines(0, 0, -1, false, vim.split(output, "\n"))
-		-- Set the filetype for syntax highlighting
-		vim.api.nvim_buf_set_option(0, "filetype", topic)
-		-- Make the buffer read-only
-		vim.api.nvim_buf_set_option(0, "modifiable", false)
-		vim.api.nvim_buf_set_option(0, "readonly", true)
-		-- Set buffer options to avoid save prompts
-		vim.api.nvim_buf_set_option(0, "buftype", "nofile")
-		vim.api.nvim_buf_set_option(0, "bufhidden", "wipe")
+		utils.create_buffer(topic, output, true)
 	end)
 end
 
