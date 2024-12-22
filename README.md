@@ -1,9 +1,6 @@
 ## cht-telescope
 use cht.sh with nvim-telescope
 
-### Disclaimer
-This is a personal project, very much a WIP.
-
 ![](./preview.gif)
 ## Installation
 via [lazy.nvim](https://github.com/folke/lazy.nvim)
